@@ -97,6 +97,7 @@
                 if(isset($row = $get_article_id->row())){
                     $article_id = $row['article_id'];
                 }
+                $get_article_id->free_result();
                 /*passing the tags array to the function get_tag_or_keyword_id() because returning an array is faster than returning ids for individual elements of the tags array*/
                 $tag_id_arr = get_tag_or_keyword_id($tags,'words'); 
                 /*adding the tags to the tags to articles relation using foreach */
@@ -104,8 +105,14 @@
                 
                 foreach($tag_id_arr as $word=>$id){
                     
-                        $data_tags_to_articles['tag_id']=$id;
-                        $this->db->insert('tags_to_articles',$data_tags_to_articles);
+                    $data_tags_to_articles['tag_id']=$id;
+                    $this->db->insert('tags_to_articles',$data_tags_to_articles);
+                    
+                    /* updating the frequency by +1 */
+                    $this->db->set('frquency','frequency+1',FALSE);
+                    $this->db->where('id',$id);
+                    $this->db->update('words');
+                    
                 }
                 /*#1 we are getting the ids of all the words in the keywords array
                   #2 we initialized the array that will contain the data for the insert command.
@@ -117,11 +124,44 @@
                 foreach($keywords_id_arr as $word=>$id){ //#3
                     $data_keywords_to_articles['keyword_id']=$id;
                     $this->db->insert('keywords_to_articles',$data_keywords_to_articles); //#4
+                    
+                    /* updating the frequency by +1 */
+                    $this->db->set('frquency','frequency+1',FALSE);
+                    $this->db->where('keyword_id',$id);
+                    $this->db->update('keywords');
                 }
             }
+            /*If the article already exists and we only have to append the changes*/
             else{
+                /* to be able to use the id and title if required we need to transform the $query into a usable object a row/array */
+                $row = $query->row();
+                $article_id = $row['article_id'];
+                /* data array for all the changes in the article including title, text and description */
+                $data = array('title'=>$title,'mytext'=>$mytext,'description'=>$description);
+                $this->db->set($data);
+                $this->db->where('article_id',$article_id);
+                $this->db->update('articles');
+                /* above three lines produce this
+                    UPDATE articles SET title={$title},mytext={$mytext},description={$description} WHERE article_id={$article_id}
+                */
+                
+                /* attempting to change the tags */
+                $table = array('select'=>'tags_to_articles','delete'=>'tags_to_articles','insert'=>'tags_to_articles','update'=>'words');
+                $column = array('select'=>'tag_id','delete'=>'tag_id','insert'=>'tag_id','update'=>'id');
+                update_tags_or_keywords($article_id,$table,$column,$tags);
+                
+                unset(array($table,$column));
+                /*attempting to update keywords*/
+                $table = array('select'=>'keywords_to_articles',
+                               'delete'=>'keywords_to_articles',
+                               'insert'=>'keywords_to_articles',
+                               'update'=>'keywords'
+                              );
+                $column = array('select'=>'keyword_id','delete'=>'keyword_id','insert'=>'keyword_id','update'=>'keyword_id');
+                update_tags_or_keywords($article_id,$table,$column,$keywords);
                 
             }
+            $query->free_result();
         }
         public function get_tag_or_keyword_id($words_arr,$table){
             $object = ($table=='words')?'id':'keyword_id'; /* to specify what do we have to select from the specified table, if the table is words we are going to select id, else we are going to select keyword_id*/
@@ -139,12 +179,13 @@
                     columns in words table : id, word, frequency;
                     columns in keywords table : keyword_id, word, frequency;
                 */
-                /*if the above query returns a row containing the id of the word just supplied it will be added to the id_arr indexed by the word itself as the key, else insert the word for which no id was found, in the table, and initialize the frequency with 1. Thenw we call the get_tag_or_keyword_id() function recurssively with the word passed as an array; array($word). */
+                /*if the above query returns a row containing the id of the word just supplied it will be added to the id_arr indexed by the word itself as the key, else insert the word for which no id was found, in the table, and initialize the frequency with 0. Thenw we call the get_tag_or_keyword_id() function recurssively with the word passed as an array; array($word). */
                 if(isset($row=$query->row())){
                     $id_arr[$word]=$row[$object]; 
                 }
                 else{
-                    $data = array('word'=>$word,'frequency'=>1);
+                    /* frequency is initialized to 0*/
+                    $data = array('word'=>$word,'frequency'=>0);
                     $this->db->insert($table,$data);
                     $id_temp = get_tag_or_keyword_id(array($word),$table); /*id_temp gets the assoc array ($word=>$id) */
                     $id_arr[$word] = $id_temp[$word]; /*assigning the content of $id_temp to $id_arr indexed by the $word*/
@@ -154,6 +195,50 @@
                 $query->free_result();
             }
             return $id_arr;
+        }
+        
+        public function update_tags_or_keywords($article_id,$table,$column,$tags_or_keywords){
+            /* step #1 fetch all the existing tags for the given article*/
+            $this->db->select($column['select']);
+            $this->db->from($table['select']);
+            $this->db->where('article_id',$article_id);
+            $query = $this->db->get();
+            $existing_id_arr = $query->result_array();
+                
+            /* step #2 get ids for the tags in the $tags array of the most recent submit */
+            $new_id_arr = get_tag_or_keyword_id($tags_or_keywords,$table['get']);
+                
+            /*step #3 and #4 populating a1 and a2*/
+            foreach($existing_id_arr as $existing_id){
+                if(!in_array($existing_id[$column['delete']],$new_id_arr)){
+                    $this->db->where($column['delete'],$existing_id[$column['delete']]);
+                    $this->db->delete($table['delete']);
+                        
+                    $this->db->set('frequency','frequency-1',FALSE);
+                    $this->db->where($column['update'],$existing_id['select']);
+                    $this->db->update($table['update']);
+                }
+                else{
+                    continue;
+                }
+            }
+            /*step #5 populating a3*/
+            foreach($new_id_arr as $word=>$id){
+                if(!in_array($id,$existing_id_arr)){
+                    $this->db->insert($table['insert'],array('article_id'=>$article_id,$column['insert']=>$id));
+                    
+                    $this->db->set('frequency','frequency+1',FALSE);
+                    $this->db->where($column['update'],$id);
+                    $this->db->update($table['update']);
+                }
+                else{
+                    continue;
+                }
+            }
+            
+            $query->free_result();
+            $unset($existing_id_arr);
+            $unset($new_id_arr);
         }
     }
 ?>
