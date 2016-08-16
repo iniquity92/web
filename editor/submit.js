@@ -116,17 +116,22 @@
         type and is empty checker for the editor. The rich text editor adds a linefeed character at the end of each paragraph. That needs to be taken care of while making the regular expressions for the editor. Also empty spaces with no text is converted to &nbsp; in a string format. So the regular expression needs to check for the characters "&nbsp;" instead of the ascii character 160(&nbsp, unicode- u00a0). Also the configuration settings of the editor was forcing a line feed at the end of a paragraph, that caused the the regular expression, /^<\w+>(\u0026(nbsp;))*<\/\w+>$|^$/gm, to fail because /..|^$/gm was still holding true. The solution was to change the way the editor formats the output and disabling line feed after </p>.
         
         */
-        if(!(not_editor_is_empty_error_flag = /^<\w+>(\u0026(nbsp;))*<\/\w+>$|^$/gm.test(editor_data)?false:true)){
+        String.prototype.trim = function(){
+            return this.replace(/^<\w+>(\u0026(nbsp;))+<\/\w+>$|^\s+|\s+$/m,"");
+        }
+        if(!(not_editor_is_empty_error_flag = (editor_data.trim()=="")?false:true)){
             editor_error_html = "<small style='color:red'>Editor can not be empty or just contain gibberish!</small>";  
         }
-            
+        else{
+            editor_error_html ="<small style='color:red'>All Good!</small>";
+        }    
         /* 
         
         checking if the description is empty, if the description is not empty the type of description's content is checked. If the description is empty a friendly msg is displayed prompting the user to enter atleast a small description
         
         */
         
-        if(!(not_description_is_empty_error_flag = /^$|^\s+$|[^\w](?=[^\w])/g.test(formData[3].value)?false:true)){
+        if(!(not_description_is_empty_error_flag = /^$|^\s+$|^[^\w](?=[^\w])$/g.test(formData[3].value)?false:true)){
             description_error_html = "<small style='color:red'>Description is needed for improving the page visibility in the searches along with with the keywords. However, description isn't mandatory it is a good practice to give dedscription.</small>";
         }
         else if(!(not_description_wrong_type_error_flag = /[^a-zA-Z0-9\u0020\u002c\u002e\u002d\u003f\u005f]+/g.test(formData[3].value)?false:true)){
@@ -225,3 +230,4 @@
 
 
 //this script is complete. make browser.php, upload.php and the scripts to process the inputs of the editor.
+//this script is complete. browser.php and upload.php are complete too. editordb is giving error. check it out
