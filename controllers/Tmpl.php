@@ -80,7 +80,8 @@
             $existing_id_arr = $query->result_array();
                 
             /* step #2 get ids for the tags in the $tags array of the most recent submit */
-            $new_id_arr = $this->get_tag_or_keyword_id($tags_or_keywords,$table['select']);
+            $new_id_obj = $this->get_tag_or_keyword_id($tags_or_keywords,$table['update']);
+            $new_id_arr = $new_id_obj[0];
                 
             /*step #3 and #4 populating a1 and a2*/
             foreach($existing_id_arr as $existing_id){
@@ -121,8 +122,8 @@
             }
             
             $query->free_result();
-            $unset($existing_id_arr);
-            $unset($new_id_arr);
+            unset($existing_id_arr);
+            unset($new_id_arr);
             return $errors;
         }
         
@@ -147,7 +148,7 @@
                 if($this->db->error()){
                     $errors[] = $this->db->error();
                 }
-                if(($row=$query->row())!=NULL){
+                if(($row=$query->row_array())!=NULL){
                     $id_arr[$word]=$row[$object]; 
                 }
                 else{
@@ -157,7 +158,7 @@
                     if($this->db->error()){
                         $errors[] = $this->db->error();
                     }
-                    $id_temp = get_tag_or_keyword_id(array($word),$table); /*id_temp gets the assoc array ($word=>$id) */
+                    $id_temp = $this->get_tag_or_keyword_id(array($word),$table); /*id_temp gets the assoc array ($word=>$id) */
                     $id_arr[$word] = $id_temp[$word]; /*assigning the content of $id_temp to $id_arr indexed by the $word*/
                     
                 }
@@ -280,7 +281,7 @@
                 /* attempting to change the tags */
                 $table = array('select'=>'tags_to_articles','delete'=>'tags_to_articles','insert'=>'tags_to_articles','update'=>'words');
                 $column = array('select'=>'tag_id','delete'=>'tag_id','insert'=>'tag_id','update'=>'id');
-                $errors[]=$this->update_tags_or_keywords($article_id,$table,$column,$tags);
+                $errors[]=$this->update_tags_or_keywords($article_id,$table,$column,$tags_input_arr);
                 
                 unset($table);
                 unset($column);
@@ -291,7 +292,7 @@
                                'update'=>'keywords'
                               );
                 $column = array('select'=>'keyword_id','delete'=>'keyword_id','insert'=>'keyword_id','update'=>'keyword_id');
-                $errors[] = $this->update_tags_or_keywords($article_id,$table,$column,$keywords);
+                $errors[] = $this->update_tags_or_keywords($article_id,$table,$column,$keywords_input_arr);
                 
             }
             
@@ -305,4 +306,5 @@
         }
         
     }
+/*keyword_id is not being updated. old tags are not getting deleted.*/
 ?>
