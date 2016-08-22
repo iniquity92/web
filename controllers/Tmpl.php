@@ -110,7 +110,7 @@
                         $errors[] = $this->db->error();
                     }
                     $this->db->set('frequency','frequency+1',FALSE);
-                    $this->db->where($column['update'],$new_id[$column['insert']]);
+                    $this->db->where($column['update'],$new_id[$column['insert_update']]);
                     $this->db->update($table['update']);
                     if($this->db->error()){
                         $errors[] = $this->db->error();
@@ -281,7 +281,7 @@
                 
                 /* attempting to change the tags */
                 $table = array('select'=>'tags_to_articles','delete'=>'tags_to_articles','insert'=>'tags_to_articles','update'=>'words');
-                $column = array('select'=>'tag_id','delete'=>'tag_id','insert'=>'tag_id','update'=>'id');
+                $column = array('select'=>'tag_id','delete'=>'tag_id','insert'=>'tag_id','update'=>'id','insert_update'=>'tag_id');
                 $errors[]=$this->update_tags_or_keywords($article_id,$table,$column,$tags_input_arr);
                 
                 unset($table);
@@ -292,7 +292,7 @@
                                'insert'=>'keywords_to_articles',
                                'update'=>'keywords'
                               );
-                $column = array('select'=>'keyword_id','delete'=>'keyword_id','insert'=>'keyword_id','update'=>'keyword_id');
+                $column = array('select'=>'keyword_id','delete'=>'keyword_id','insert'=>'keyword_id','update'=>'keyword_id','insert_update'=>'keyword_id');
                 $errors[] = $this->update_tags_or_keywords($article_id,$table,$column,$keywords_input_arr);
                 
             }
