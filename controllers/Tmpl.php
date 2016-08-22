@@ -85,7 +85,7 @@
                 
             /*step #3 and #4 populating a1 and a2*/
             foreach($existing_id_arr as $existing_id){
-                if(!in_array($existing_id[$column['delete']],$new_id_arr)){
+                if(!in_array($existing_id,$new_id_arr)){
                     $this->db->where($column['delete'],$existing_id[$column['delete']]);
                     $this->db->delete($table['delete']);
                     if($this->db->error()){
@@ -103,14 +103,14 @@
                 }
             }
             /*step #5 populating a3*/
-            foreach($new_id_arr as $word=>$id){
-                if(!in_array($id,$existing_id_arr)){
-                    $this->db->insert($table['insert'],array('article_id'=>$article_id,$column['insert']=>$id));
+            foreach($new_id_arr as $new_id){
+                if(!in_array($new_id,$existing_id_arr)){
+                    $this->db->insert($table['insert'],array('article_id'=>$article_id,$column['insert']=>$new_id[$column['insert']]));
                     if($this->db->error()){
                         $errors[] = $this->db->error();
                     }
                     $this->db->set('frequency','frequency+1',FALSE);
-                    $this->db->where($column['update'],$id);
+                    $this->db->where($column['update'],$new_id[$column['update']]);
                     $this->db->update($table['update']);
                     if($this->db->error()){
                         $errors[] = $this->db->error();
@@ -130,6 +130,7 @@
         public function get_tag_or_keyword_id($words_arr,$table){
             $errors = array();
             $object = ($table=='words')?'id':'keyword_id'; /* to specify what do we have to select from the specified table, if the table is words we are going to select id, else we are going to select keyword_id*/
+            $id_arr_index = ($object=='id')?'tag_id':'keyword_id';
             
             $id_arr = array(); /* initializing the array that is going to get all the ids*/
             
@@ -149,17 +150,17 @@
                     $errors[] = $this->db->error();
                 }
                 if(($row=$query->row_array())!=NULL){
-                    $id_arr[$word]=$row[$object]; 
+                    $id_arr[][$id_arr_index]=$row[$object]; 
                 }
                 else{
-                    /* frequency is initialized to 0*/
+                    /* frequency is initialized to 1*/
                     $data = array('word'=>$word,'frequency'=>0);
                     $this->db->insert($table,$data);
                     if($this->db->error()){
                         $errors[] = $this->db->error();
                     }
                     $id_temp = $this->get_tag_or_keyword_id(array($word),$table); /*id_temp gets the assoc array ($word=>$id) */
-                    $id_arr[$word] = $id_temp[$word]; /*assigning the content of $id_temp to $id_arr indexed by the $word*/
+                    $id_arr[$id_arr_index] = $id_temp[0][0][$id_arr_index]; /*assigning the content of $id_temp to $id_arr indexed by the $word*/
                     
                 }
                 //freeing the query variable
@@ -219,9 +220,9 @@
                 /*adding the tags to the tags to articles relation using foreach */
                 $data_tags_to_articles['article_id']=$article_id;
                 
-                foreach($tag_id_arr as $word=>$id){
+                foreach($tag_id_arr as $id){
                     
-                    $data_tags_to_articles['tag_id']=$id;
+                    $data_tags_to_articles['tag_id']=$id['tag_id'];
                     $this->db->insert('tags_to_articles',$data_tags_to_articles);
                     if($this->db->error()){
                         $errors[] = $this->db->error();
@@ -243,8 +244,8 @@
                 $keywords_id_arr = $keywords_obj[0];
                 $errors[] = $keywords_obj[1];
                 $data_keywords_to_articles['article_id']=$article_id;//#2
-                foreach($keywords_id_arr as $word=>$id){ //#3
-                    $data_keywords_to_articles['keyword_id']=$id;
+                foreach($keywords_id_arr as $id){ //#3
+                    $data_keywords_to_articles['keyword_id']=$id['tag_id'];
                     $this->db->insert('keywords_to_articles',$data_keywords_to_articles); //#4
                     if($this->db->error()){
                         $errors[] = $this->db->error();
