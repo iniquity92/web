@@ -110,7 +110,7 @@
                         $errors[] = $this->db->error();
                     }
                     $this->db->set('frequency','frequency+1',FALSE);
-                    $this->db->where($column['update'],$new_id[$column['update']]);
+                    $this->db->where($column['update'],$new_id[$column['insert']]);
                     $this->db->update($table['update']);
                     if($this->db->error()){
                         $errors[] = $this->db->error();
@@ -160,7 +160,7 @@
                         $errors[] = $this->db->error();
                     }
                     $id_temp = $this->get_tag_or_keyword_id(array($word),$table); /*id_temp gets the assoc array ($word=>$id) */
-                    $id_arr[$id_arr_index] = $id_temp[0][0][$id_arr_index]; /*assigning the content of $id_temp to $id_arr indexed by the $word*/
+                    $id_arr[][$id_arr_index] = $id_temp[0][0][$id_arr_index]; /*assigning the content of $id_temp to $id_arr indexed by the $word*/
                     
                 }
                 //freeing the query variable
