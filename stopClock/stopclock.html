@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>    
+<head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='initial-scale=1,width=device-width' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" type='text/css'/>
+    <link rel='stylesheet' href='static/css/stopclock.css' type='text/css' />
+    
+</head>
+<body>
+    <span id='attribution' class='ui-icon ui-icon-info' title='View source code for attribution'></span>
+    <div id='clock'>
+  <div id='active'>
+    <h3>Work</h3>
+    <span>
+      <select id="amin">
+      <option value='0'>0</option>
+      <option value='1'>1</option>
+      <option value='2'>2</option>
+      <option value='3'>3</option>
+      <option value='4'>4</option>
+      <option value='5'>5</option>
+      <option value='6'>6</option>
+      <option value='7'>7</option>
+      <option value='8'>8</option>
+      <option value='9'>9</option>
+      <option value='10'>10</option>
+      <option value='11'>11</option>
+      <option value='12'>12</option>
+      <option value='13'>13</option>
+      <option value='14'>14</option>
+      <option value='15'>15</option>
+      <option value='16'>16</option>
+      <option value='17'>17</option>
+      <option value='18'>18</option>
+      <option value='19'>19</option>
+      <option value='20'>20</option>
+      <option value='21'>21</option>
+      <option value='22'>22</option>
+      <option value='23'>23</option>
+      <option value='24'>24</option>
+      <option value='25'>25</option>
+      <option value='26'>26</option>
+      <option value='27'>27</option>
+      <option value='28'>28</option>
+      <option value='29'>29</option>
+      <option value='30'>30</option>
+      <option value='31'>31</option>
+      <option value='32'>32</option>
+      <option value='33'>33</option>
+      <option value='34'>34</option>
+      <option value='35'>35</option>
+      <option value='36'>36</option>
+      <option value='37'>37</option>
+      <option value='38'>38</option>
+      <option value='39'>39</option>
+      <option value='40'>40</option>
+      <option value='41'>41</option>
+      <option value='42'>42</option>
+      <option value='43'>43</option>
+      <option value='44'>44</option>
+      <option value='45'>45</option>
+      <option value='46'>46</option>
+      <option value='47'>47</option>
+      <option value='48'>48</option>
+      <option value='49'>49</option>
+      <option value='50'>50</option>
+      <option value='51'>51</option>
+      <option value='52'>52</option>
+      <option value='53'>53</option>
+      <option value='54'>54</option>
+      <option value='55'>55</option>
+      <option value='56'>56</option>
+      <option value='57'>57</option>
+      <option value='58'>58</option>
+      <option value='59'>59</option>
+      </select>
+    </span>
+    <span class='ticker'>:</span>
+    <span>
+      <select id="asec">
+      <option value='0'>0</option>
+      <option value='1'>1</option>
+      <option value='2'>2</option>
+      <option value='3'>3</option>
+      <option value='4'>4</option>
+      <option value='5'>5</option>
+      <option value='6'>6</option>
+      <option value='7'>7</option>
+      <option value='8'>8</option>
+      <option value='9'>9</option>
+      <option value='10'>10</option>
+      <option value='11'>11</option>
+      <option value='12'>12</option>
+      <option value='13'>13</option>
+      <option value='14'>14</option>
+      <option value='15'>15</option>
+      <option value='16'>16</option>
+      <option value='17'>17</option>
+      <option value='18'>18</option>
+      <option value='19'>19</option>
+      <option value='20'>20</option>
+      <option value='21'>21</option>
+      <option value='22'>22</option>
+      <option value='23'>23</option>
+      <option value='24'>24</option>
+      <option value='25'>25</option>
+      <option value='26'>26</option>
+      <option value='27'>27</option>
+      <option value='28'>28</option>
+      <option value='29'>29</option>
+      <option value='30'>30</option>
+      <option value='31'>31</option>
+      <option value='32'>32</option>
+      <option value='33'>33</option>
+      <option value='34'>34</option>
+      <option value='35'>35</option>
+      <option value='36'>36</option>
+      <option value='37'>37</option>
+      <option value='38'>38</option>
+      <option value='39'>39</option>
+      <option value='40'>40</option>
+      <option value='41'>41</option>
+      <option value='42'>42</option>
+      <option value='43'>43</option>
+      <option value='44'>44</option>
+      <option value='45'>45</option>
+      <option value='46'>46</option>
+      <option value='47'>47</option>
+      <option value='48'>48</option>
+      <option value='49'>49</option>
+      <option value='50'>50</option>
+      <option value='51'>51</option>
+      <option value='52'>52</option>
+      <option value='53'>53</option>
+      <option value='54'>54</option>
+      <option value='55'>55</option>
+      <option value='56'>56</option>
+      <option value='57'>57</option>
+      <option value='58'>58</option>
+      <option value='59'>59</option>
+      </select>
+    </span>
+    <div id='workDisplay'>
+      <span id='workMin'>00</span>
+      <span class='ticker'>:</span>
+      <span id='workSec'>00</span>
+    </div>
+  </div>
+  <div id='rest'>
+    <h3>Rest</h3>
+    <span>
+      <select id="rmin">
+      <option value='0'>0</option>
+      <option value='1'>1</option>
+      <option value='2'>2</option>
+      <option value='3'>3</option>
+      <option value='4'>4</option>
+      <option value='5'>5</option>
+      <option value='6'>6</option>
+      <option value='7'>7</option>
+      <option value='8'>8</option>
+      <option value='9'>9</option>
+      <option value='10'>10</option>
+      <option value='11'>11</option>
+      <option value='12'>12</option>
+      <option value='13'>13</option>
+      <option value='14'>14</option>
+      <option value='15'>15</option>
+      <option value='16'>16</option>
+      <option value='17'>17</option>
+      <option value='18'>18</option>
+      <option value='19'>19</option>
+      <option value='20'>20</option>
+      <option value='21'>21</option>
+      <option value='22'>22</option>
+      <option value='23'>23</option>
+      <option value='24'>24</option>
+      <option value='25'>25</option>
+      <option value='26'>26</option>
+      <option value='27'>27</option>
+      <option value='28'>28</option>
+      <option value='29'>29</option>
+      <option value='30'>30</option>
+      <option value='31'>31</option>
+      <option value='32'>32</option>
+      <option value='33'>33</option>
+      <option value='34'>34</option>
+      <option value='35'>35</option>
+      <option value='36'>36</option>
+      <option value='37'>37</option>
+      <option value='38'>38</option>
+      <option value='39'>39</option>
+      <option value='40'>40</option>
+      <option value='41'>41</option>
+      <option value='42'>42</option>
+      <option value='43'>43</option>
+      <option value='44'>44</option>
+      <option value='45'>45</option>
+      <option value='46'>46</option>
+      <option value='47'>47</option>
+      <option value='48'>48</option>
+      <option value='49'>49</option>
+      <option value='50'>50</option>
+      <option value='51'>51</option>
+      <option value='52'>52</option>
+      <option value='53'>53</option>
+      <option value='54'>54</option>
+      <option value='55'>55</option>
+      <option value='56'>56</option>
+      <option value='57'>57</option>
+      <option value='58'>58</option>
+      <option value='59'>59</option>
+      </select>
+    </span>
+    <span class='ticker'>:</span>
+    <span>
+      <select id="rsec">
+      <option value='0'>0</option>
+      <option value='1'>1</option>
+      <option value='2'>2</option>
+      <option value='3'>3</option>
+      <option value='4'>4</option>
+      <option value='5'>5</option>
+      <option value='6'>6</option>
+      <option value='7'>7</option>
+      <option value='8'>8</option>
+      <option value='9'>9</option>
+      <option value='10'>10</option>
+      <option value='11'>11</option>
+      <option value='12'>12</option>
+      <option value='13'>13</option>
+      <option value='14'>14</option>
+      <option value='15'>15</option>
+      <option value='16'>16</option>
+      <option value='17'>17</option>
+      <option value='18'>18</option>
+      <option value='19'>19</option>
+      <option value='20'>20</option>
+      <option value='21'>21</option>
+      <option value='22'>22</option>
+      <option value='23'>23</option>
+      <option value='24'>24</option>
+      <option value='25'>25</option>
+      <option value='26'>26</option>
+      <option value='27'>27</option>
+      <option value='28'>28</option>
+      <option value='29'>29</option>
+      <option value='30'>30</option>
+      <option value='31'>31</option>
+      <option value='32'>32</option>
+      <option value='33'>33</option>
+      <option value='34'>34</option>
+      <option value='35'>35</option>
+      <option value='36'>36</option>
+      <option value='37'>37</option>
+      <option value='38'>38</option>
+      <option value='39'>39</option>
+      <option value='40'>40</option>
+      <option value='41'>41</option>
+      <option value='42'>42</option>
+      <option value='43'>43</option>
+      <option value='44'>44</option>
+      <option value='45'>45</option>
+      <option value='46'>46</option>
+      <option value='47'>47</option>
+      <option value='48'>48</option>
+      <option value='49'>49</option>
+      <option value='50'>50</option>
+      <option value='51'>51</option>
+      <option value='52'>52</option>
+      <option value='53'>53</option>
+      <option value='54'>54</option>
+      <option value='55'>55</option>
+      <option value='56'>56</option>
+      <option value='57'>57</option>
+      <option value='58'>58</option>
+      <option value='59'>59</option>
+      </select>
+    </span>
+    <div id='restDisplay'>
+      <span id='restMin'>00</span>
+      <span class='ticker'>:</span>
+      <span id='restSec'>00</span>
+    </div>
+  </div>
+  <button id='setClocks'>Set</button>
+  <button id='run'>Run</button>
+  <button id='stop'>Stop</button>
+  <button id='pause'>Pause</button>
+</div>
+<!--div>
+    Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+
+</div-->
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js'></script>
+<script src='static/js/stopclock.js'></script>
+<script>
+    $(function(){
+        $("select").selectmenu({width:70});
+        $("#run").button({
+            icon:"ui-icon-play",
+            showLabel:false
+        });
+        $("#pause").button({
+            icon:"ui-icon-pause",
+            showLabel:false
+        });
+        $("#stop").button({
+            icon:"ui-icon-stop",
+            showLabel:false
+        });
+        $("#setClocks").button({
+            icon:"ui-icon-check",
+            showLabel:false
+        });
+        $("#attribution").tooltip();
+    });
+</script>
+</body>
+</html>
